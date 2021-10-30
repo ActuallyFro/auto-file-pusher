@@ -21,29 +21,62 @@ def show_time():
 
 # -------------------------------------------------------------------
 #2 - connect to http://localhost:8000/ and check for a file every 500ms
-def check_server(debug):
+def check_server_for_exists(debug):
 	HostIP = "localhost"
 	HostPort = 8000
-	file2downloadWithPath = "test.txt"
+	file2downloadWithPath = "file.png"
 	
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect((HostIP, HostPort))
 
-	s.send(b"GET /" + file2downloadWithPath.encode() + b" HTTP/1.1\r\n\r\n")
+	# USE HEAD and NOT GET ... b/c it will NOT start downloading...
+	s.send(b"HEAD /" + file2downloadWithPath.encode() + b" HTTP/1.1\r\n\r\n")
 	response = s.recv(1024)
 	s.close()
 
 	if debug:
 		print(response)
 
-	if response.find(b"404") != -1:
-		return True
-	else:
+	# https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+	# return False
+	if response.find(b"404") != -1 and response.find(b"not"):
 		return False
+	else:
+		return True
+
+	# Alternative: Check code 200 -- https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200
+	# https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200
+		# if response.find(b"200 OK") != -1:
+		# 	return False
+		# else:
+		# 	return True
+
 # -------------------------------------------------------------------
 
 # -------------------------------------------------------------------
 # 3. Pull the file from the server IF IT EXISTS
+# def check_server(debug):
+# 	HostIP = "localhost"
+# 	HostPort = 8000
+# 	file2downloadWithPath = "test.txt"
+	
+# 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# 	s.connect((HostIP, HostPort))
+
+# # Send request HEAD for file
+
+
+# 	s.send(b"GET /" + file2downloadWithPath.encode() + b" HTTP/1.1\r\n\r\n")
+# 	response = s.recv(1024)
+# 	s.close()
+
+# 	if debug:
+# 		print(response)
+
+# 	if response.find(b"404") != -1:
+# 		return True
+# 	else:
+# 		return False
 # -------------------------------------------------------------------
 
 # -------------------------------------------------------------------
@@ -91,10 +124,10 @@ while True:
 			print("File found...downloading...")
 			# print("File downloaded: "+str(hasFileDownloadedLogged))
 
-
 	#Check server for file; when found log time
 	if not hasFileBeenFound:
-		hasFileBeenFound = check_server(False)
+		hasFileBeenFound = check_server_for_exists(True)
+
 		if hasFileBeenFound:
 			strFileFoundAtTime = " [@"+curTimeStr+"]"
 	
