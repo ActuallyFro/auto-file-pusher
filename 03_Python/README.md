@@ -1,4 +1,4 @@
-Auto-File Pusher
+Auto-File Puller
 ================
 - Watch a web (http) file for existance
 - When it is a NOT-404 error, pull it down
