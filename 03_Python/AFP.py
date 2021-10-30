@@ -22,10 +22,6 @@ def show_time():
 # -------------------------------------------------------------------
 #2 - connect to http://localhost:8000/ and check for a file every 500ms
 def check_server_for_exists(HostIP, HostPort, file2downloadWithPath, debug=False):
-	# HostIP = "localhost"
-	# HostPort = 8000
-	# file2downloadWithPath = "file.png"
-	
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect((HostIP, HostPort))
 
@@ -38,18 +34,12 @@ def check_server_for_exists(HostIP, HostPort, file2downloadWithPath, debug=False
 		print(response)
 
 	# https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
-	# return False
 	if response.find(b"404") != -1 and response.find(b"not"):
 		return False
 	else:
 		return True
 
 	# Alternative: Check code 200 -- https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200
-	# https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200
-		# if response.find(b"200 OK") != -1:
-		# 	return False
-		# else:
-		# 	return True
 
 # -------------------------------------------------------------------
 
