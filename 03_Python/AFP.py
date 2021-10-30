@@ -3,6 +3,7 @@ import socket #for downloading the file
 import datetime #to get clock time
 import time #To sleep
 import re #regex to parse downloaded text stream
+import shutil #to move files
 
 # Program Description:
 # ====================
@@ -10,15 +11,18 @@ import re #regex to parse downloaded text stream
 
 # Settings
 # --------
-toggleToShow = True
 checkEveryXSec= 5.0
+outputFile="file.png"
 destination_folder = "New_Work_Folder"
 
+# Loop Conditions:
+stillGettingFile = True
+alwaysRun = False
 
 # It does the following:
 # ----------------------
-# 0. Clear screen/GUI
-# 1. Show the current time
+# 0. Get the current time
+# 1. Clear screen/GUI
 # 2. check every 500ms for a file
 # 3. Pull the file from the server IF IT EXISTS
 # 4. Creates a directory for the file
@@ -146,7 +150,12 @@ def create_destination_directory(strForNewDir):
 
 # main program
 # =============================================================================
+timeToUpdateFrame = 0.5 #update screen every 0.5 seconds -- DON'T server check!
+updateFrame = True
 
+totalUpdateFramesPerSec = 1.0/timeToUpdateFrame
+totalUpdatesBeforeRunningServerCheck = totalUpdateFramesPerSec*checkEveryXSec
+currentUpdateCount = 0
 
 hasFileBeenFound = False
 strFileFoundAtTime =""
@@ -160,12 +169,16 @@ hasFileDownloadedLogged = False
 hasFileDownloadedSizeConfirmedLogged = False
 strFileDownloadConfirmed=""
 hasNewDirectoryCreatedLogged = False
+hasFileBeenDownloadedAndPlacedInDirectoryLogged = False
 
 # loop: clear screen, show time, check server, pull file
-while True:
-	# 0. Clear screen/GUI & 1. Show the current time
-	if toggleToShow:
-		curTimeStr = str(show_time())
+while stillGettingFile or alwaysRun:
+	#0. Show the current time
+	curTimeStr = str(show_time())
+
+	# 1. Clear screen/GUI
+	if updateFrame:
+		updateFrame = False
 		os.system("clear")
 		print("Auto File Puller   <Ctrl+C to quit>")
 		print("================")
@@ -188,6 +201,10 @@ while True:
 			print("File downloaded size confirmed: "+strFileDownloadConfirmed)
 		if hasNewDirectoryCreatedLogged:
 			print("New Directory ("+ destination_folder +") made!")
+		if hasFileBeenDownloadedAndPlacedInDirectoryLogged:
+			print("File placed in directory!"+"[@"+curTimeStr+"]")
+			stillGettingFile = False #exit loop -- since final print/log is DONE!
+
 
 
 	# 2. check every 500ms for a file
@@ -204,14 +221,14 @@ while True:
 
 	# 3. Pull the file from the server IF IT EXISTS
 	if hasFileDownloadedLogged and not hasFileBeenDownloaded:
-		ResponseBytes = download_from_server("localhost", 8000, "file.png", "file.png")
+		ResponseBytes = download_from_server("localhost", 8000, "file.png", outputFile)
 		curTimeStr = str(show_time()) #update time due to serial processing
 		strFileDownloadedAtTime = " [@"+curTimeStr+"]"
 		hasFileBeenDownloaded = True
 
 		#check if file downloaded
-		if os.path.isfile("file.png"):
-			fileSize = os.path.getsize("file.png")
+		if os.path.isfile(outputFile):
+			fileSize = os.path.getsize(outputFile)
 			if fileSize == ResponseBytes:
 				strFileDownloadConfirmed="<Size: "+str(ResponseBytes)+">"
 				hasFileDownloadedSizeConfirmedLogged= True
@@ -224,14 +241,24 @@ while True:
 			hasDirectoryBeenCreated = True
 			hasNewDirectoryCreatedLogged = True
 
+	# 5. Moves the downloaded file to the directory
+	if hasNewDirectoryCreatedLogged:
+		if os.path.isfile(outputFile): #NOT needed, but best to check
+			shutil.move(outputFile, destination_folder) #https://docs.python.org/3/library/shutil.html
+			hasFileBeenDownloadedAndPlacedInDirectory = True
 
-
-
-# 5. Moves the downloaded file to the directory
+	#log the fact the file has been downloaded and placed in directory
+	if hasFileBeenDownloadedAndPlacedInDirectory:
+		#Check for file in a directory
+		if os.path.isfile(destination_folder+"/"+outputFile):
+			hasFileBeenDownloadedAndPlacedInDirectoryLogged = True
 
 	# wait 500ms
-	time.sleep(checkEveryXSec)
-	toggleToShow = not toggleToShow
-
+	time.sleep(timeToUpdateFrame)
+	
+	currentUpdateCount += 1
+	if currentUpdateCount >= totalUpdatesBeforeRunningServerCheck:
+		currentUpdateCount = 0
+		updateFrame = True
 
 
