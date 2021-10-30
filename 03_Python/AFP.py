@@ -159,6 +159,7 @@ hasFileBeenDownloadedAndPlacedInDirectory = False
 hasFileDownloadedLogged = False
 hasFileDownloadedSizeConfirmedLogged = False
 strFileDownloadConfirmed=""
+hasNewDirectoryCreatedLogged = False
 
 # loop: clear screen, show time, check server, pull file
 while True:
@@ -185,6 +186,8 @@ while True:
 			print("File downloaded!")
 		if hasFileDownloadedSizeConfirmedLogged:
 			print("File downloaded size confirmed: "+strFileDownloadConfirmed)
+		if hasNewDirectoryCreatedLogged:
+			print("New Directory ("+ destination_folder +") made!")
 
 
 	# 2. check every 500ms for a file
@@ -216,6 +219,11 @@ while True:
 	# 4. Creates a directory for the file
 	if hasFileDownloadedSizeConfirmedLogged:
 		create_destination_directory(destination_folder)
+		# Check if directory exists
+		if os.path.isdir(destination_folder):
+			hasDirectoryBeenCreated = True
+			hasNewDirectoryCreatedLogged = True
+
 
 
 
