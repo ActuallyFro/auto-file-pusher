@@ -52,7 +52,8 @@ def check_server_for_exists(HostIP, HostPort, file2downloadWithPath, debug=False
 		print(response)
 
 	# https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
-	if response.find(b"404") != -1 and response.find(b"not"):
+	# if response.find(b"404") != -1 and response.find(b"not"):
+	if response.find(b"404") != -1:
 		return False
 	else:
 		return True
@@ -152,11 +153,13 @@ def create_destination_directory(strForNewDir):
 # =============================================================================
 timeToUpdateFrame = 0.5 #update screen every 0.5 seconds -- DON'T server check!
 updateFrame = True
+runFileChecks = True
 
 totalUpdateFramesPerSec = 1.0/timeToUpdateFrame
 totalUpdatesBeforeRunningServerCheck = totalUpdateFramesPerSec*checkEveryXSec
 currentUpdateCount = 0
 
+strLastCheckPreDownloadTime = ""
 hasFileBeenFound = False
 strFileFoundAtTime =""
 hasFileBeenDownloaded = False
@@ -182,6 +185,9 @@ while stillGettingFile or alwaysRun:
 		os.system("clear")
 		print("Auto File Puller   <Ctrl+C to quit>")
 		print("================")
+		print("Config: Out file <"+outputFile+">")
+		print("Config: Saving to dir <"+destination_folder+">")
+		print("Config: Check every <"+str(checkEveryXSec)+"> secs")
 		print("Current time: " + curTimeStr)
 		print("")
 		print("Statuses")
@@ -193,6 +199,7 @@ while stillGettingFile or alwaysRun:
 		print("")
 		print("Logs")
 		print("--------")
+		print("Waiting for file ... last check @"+strFileDownloadedAtTime)
 		if hasFileDownloadedLogged:
 			print("File found...downloading..."+strFileDownloadedAtTime)
 		if hasFileBeenDownloaded:
@@ -210,10 +217,13 @@ while stillGettingFile or alwaysRun:
 	# 2. check every 500ms for a file
 	#Check server for file; when found log time
 	if not hasFileBeenFound:
-		hasFileBeenFound = check_server_for_exists("localhost", 8000, "file.png")
+		if runFileChecks: #restricts to ping the server to configured checkEveryXSec
+			runFileChecks = False
+			strFileDownloadedAtTime=curTimeStr
+			hasFileBeenFound = check_server_for_exists("localhost", 8000, "file.png")
 
-		if hasFileBeenFound:
-			strFileFoundAtTime = " [@"+curTimeStr+"]"
+			if hasFileBeenFound:
+				strFileFoundAtTime = " [@"+curTimeStr+"]"
 	
 	else: #File exists...
 		if not hasFileDownloadedLogged:
@@ -235,15 +245,19 @@ while stillGettingFile or alwaysRun:
 
 	# 4. Creates a directory for the file
 	if hasFileDownloadedSizeConfirmedLogged:
-		create_destination_directory(destination_folder)
-		# Check if directory exists
 		if os.path.isdir(destination_folder):
 			hasDirectoryBeenCreated = True
 			hasNewDirectoryCreatedLogged = True
+		else:
+			create_destination_directory(destination_folder)
 
 	# 5. Moves the downloaded file to the directory
 	if hasNewDirectoryCreatedLogged:
 		if os.path.isfile(outputFile): #NOT needed, but best to check
+			if os.path.isfile(destination_folder+"/"+outputFile):
+				os.remove(destination_folder+"/"+outputFile)
+
+			#move new file to directory
 			shutil.move(outputFile, destination_folder) #https://docs.python.org/3/library/shutil.html
 			hasFileBeenDownloadedAndPlacedInDirectory = True
 
@@ -255,10 +269,12 @@ while stillGettingFile or alwaysRun:
 
 	# wait 500ms
 	time.sleep(timeToUpdateFrame)
+	updateFrame = True
 	
-	currentUpdateCount += 1
-	if currentUpdateCount >= totalUpdatesBeforeRunningServerCheck:
-		currentUpdateCount = 0
-		updateFrame = True
+	if not hasFileDownloadedLogged:
+		currentUpdateCount += 1
+		if currentUpdateCount >= totalUpdatesBeforeRunningServerCheck:
+			currentUpdateCount = 0
+			runFileChecks = True
 
 
