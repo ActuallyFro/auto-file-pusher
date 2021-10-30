@@ -12,6 +12,7 @@ import re #regex to parse downloaded text stream
 # --------
 toggleToShow = True
 checkEveryXSec= 5.0
+destination_folder = "New_Work_Folder"
 
 
 # It does the following:
@@ -214,7 +215,7 @@ while True:
 
 	# 4. Creates a directory for the file
 	if hasFileDownloadedSizeConfirmedLogged:
-		create_destination_directory("AFP_downloads")
+		create_destination_directory(destination_folder)
 
 
 
