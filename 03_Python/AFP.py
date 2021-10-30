@@ -5,8 +5,7 @@ import time #To sleep
 import re #regex to parse downloaded text stream
 import shutil #to move files
 
-# Program Description:
-# ====================
+# =============== I. Program Description & Settings =================================================================
 # Create the Auto-File-Puller
 
 # Settings
@@ -22,16 +21,17 @@ alwaysRun = False
 # It does the following:
 # ----------------------
 # 0. Get the current time
-# 1. Clear screen/GUI
-# 2. check every 500ms for a file
+# 1. Clear screen/ print GUI
+# 2. Check every checkEveryXSec for a file (but update the GUI every timeToUpdateFrame) 
 # 3. Pull the file from the server IF IT EXISTS
 # 4. Creates a directory for the file
 # 5. Moves the downloaded file to the directory
 
-# Note: Requests exists -- I HATE libs on libs ... that ARE NOT STDLibs; python pushes you too... https://docs.python.org/3/library/http.client.html
+# Note: "Requests" (as an http lib) exists -- I HATE libs on libs ... that ARE NOT STDLibs; python pushes you too... https://docs.python.org/3/library/http.client.html
 
+# =============== II. Functions =================================================================
 # -------------------------------------------------------------------
-#1 - Show the current time in HH:MM:SS format
+#1 - Get the current time in HH:MM:SS format
 def show_time():
 	time = datetime.datetime.now()
 	return time.strftime("%H:%M:%S")
@@ -174,9 +174,10 @@ strFileDownloadConfirmed=""
 hasNewDirectoryCreatedLogged = False
 hasFileBeenDownloadedAndPlacedInDirectoryLogged = False
 
+# =============== III. CHECK LOOP =================================================================
 # loop: clear screen, show time, check server, pull file
 while stillGettingFile or alwaysRun:
-	#0. Show the current time
+	#0. Get the current time
 	curTimeStr = str(show_time())
 
 	# 1. Clear screen/GUI
