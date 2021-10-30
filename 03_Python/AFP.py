@@ -21,10 +21,10 @@ def show_time():
 
 # -------------------------------------------------------------------
 #2 - connect to http://localhost:8000/ and check for a file every 500ms
-def check_server_for_exists(debug):
-	HostIP = "localhost"
-	HostPort = 8000
-	file2downloadWithPath = "file.png"
+def check_server_for_exists(HostIP, HostPort, file2downloadWithPath, debug=False):
+	# HostIP = "localhost"
+	# HostPort = 8000
+	# file2downloadWithPath = "file.png"
 	
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect((HostIP, HostPort))
@@ -126,7 +126,7 @@ while True:
 
 	#Check server for file; when found log time
 	if not hasFileBeenFound:
-		hasFileBeenFound = check_server_for_exists(True)
+		hasFileBeenFound = check_server_for_exists("localhost", 8000, "file.png")
 
 		if hasFileBeenFound:
 			strFileFoundAtTime = " [@"+curTimeStr+"]"
