@@ -144,6 +144,8 @@ hasFileBeenDownloadedAndPlacedInDirectory = False
 
 # Logs
 hasFileDownloadedLogged = False
+hasFileDownloadedSizeConfirmedLogged = False
+strFileDownloadConfirmed=""
 
 # loop: clear screen, show time, check server, pull file
 while True:
@@ -165,7 +167,10 @@ while True:
 		print("--------")
 		if hasFileDownloadedLogged:
 			print("File found...downloading..."+strFileDownloadedAtTime)
-			# print("File downloaded: "+str(hasFileDownloadedLogged))
+		if hasFileBeenDownloaded:
+			print("File downloaded!")
+		if hasFileDownloadedSizeConfirmedLogged:
+			print("File downloaded size confirmed: "+strFileDownloadConfirmed)
 
 	#Check server for file; when found log time
 	if not hasFileBeenFound:
@@ -181,11 +186,15 @@ while True:
 	if hasFileDownloadedLogged and not hasFileBeenDownloaded:
 		ResponseBytes = download_from_server("localhost", 8000, "file.png", "file.png")
 		curTimeStr = str(show_time()) #update time due to serial processing
-		strFileDownloadedAtTime = " [@"+curTimeStr+"] <Size: "+str(ResponseBytes)+">"
+		strFileDownloadedAtTime = " [@"+curTimeStr+"]"
+		hasFileBeenDownloaded = True
 
 		#check if file downloaded
 		if os.path.isfile("file.png"):
-			hasFileBeenDownloaded = True
+			fileSize = os.path.getsize("file.png")
+			if fileSize == ResponseBytes:
+				strFileDownloadConfirmed="<Size: "+str(ResponseBytes)+">"
+				hasFileDownloadedSizeConfirmedLogged= True
 
 	# 	# # create directory
 	# 	# os.system("mkdir -p ./AFP_downloads/")
