@@ -5,8 +5,18 @@ import time #To sleep
 import re #regex to parse downloaded text stream
 
 # Program Description:
+# ====================
 # Create the Auto-File-Puller
+
+# Settings
+# --------
+toggleToShow = True
+checkEveryXSec= 5.0
+
+
 # It does the following:
+# ----------------------
+# 0. Clear screen/GUI
 # 1. Show the current time
 # 2. check every 500ms for a file
 # 3. Pull the file from the server IF IT EXISTS
@@ -123,6 +133,10 @@ def download_from_server(HostIP, HostPort, file2downloadWithPath, outputFile="su
 
 # -------------------------------------------------------------------
 # 4. Creates a directory for the file
+def create_destination_directory(strForNewDir):
+	if not os.path.exists(strForNewDir):
+		os.makedirs(strForNewDir)
+
 # -------------------------------------------------------------------
 
 # -------------------------------------------------------------------
@@ -132,8 +146,6 @@ def download_from_server(HostIP, HostPort, file2downloadWithPath, outputFile="su
 # main program
 # =============================================================================
 
-toggleToShow = True
-timeout= 0.5
 
 hasFileBeenFound = False
 strFileFoundAtTime =""
@@ -149,6 +161,7 @@ strFileDownloadConfirmed=""
 
 # loop: clear screen, show time, check server, pull file
 while True:
+	# 0. Clear screen/GUI & 1. Show the current time
 	if toggleToShow:
 		curTimeStr = str(show_time())
 		os.system("clear")
@@ -172,6 +185,8 @@ while True:
 		if hasFileDownloadedSizeConfirmedLogged:
 			print("File downloaded size confirmed: "+strFileDownloadConfirmed)
 
+
+	# 2. check every 500ms for a file
 	#Check server for file; when found log time
 	if not hasFileBeenFound:
 		hasFileBeenFound = check_server_for_exists("localhost", 8000, "file.png")
@@ -183,6 +198,7 @@ while True:
 		if not hasFileDownloadedLogged:
 			hasFileDownloadedLogged = True
 
+	# 3. Pull the file from the server IF IT EXISTS
 	if hasFileDownloadedLogged and not hasFileBeenDownloaded:
 		ResponseBytes = download_from_server("localhost", 8000, "file.png", "file.png")
 		curTimeStr = str(show_time()) #update time due to serial processing
@@ -196,16 +212,16 @@ while True:
 				strFileDownloadConfirmed="<Size: "+str(ResponseBytes)+">"
 				hasFileDownloadedSizeConfirmedLogged= True
 
-	# 	# # create directory
-	# 	# os.system("mkdir -p ./AFP_downloads/")
-	# 	# # move file
-	# 	# os.system("mv file.png ./AFP_downloads/file.png")
-	# 	# # exit loop
-	# 	break
-	# else:
+	# 4. Creates a directory for the file
+	if hasFileDownloadedSizeConfirmedLogged:
+		create_destination_directory("AFP_downloads")
+
+
+
+# 5. Moves the downloaded file to the directory
 
 	# wait 500ms
-	time.sleep(timeout)
+	time.sleep(checkEveryXSec)
 	toggleToShow = not toggleToShow
 
 
