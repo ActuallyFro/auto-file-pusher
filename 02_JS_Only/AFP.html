@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Example ALSO from here: https://www.w3schools.com/js/tryit.asp?filename=tryjs_timing_clock -->
+
+<head>
+  <script>
+    function startTime() {
+      const today = new Date();
+      let h = today.getHours();
+      let m = today.getMinutes();
+      let s = today.getSeconds();
+      m = checkTime(m);
+      s = checkTime(s);
+      document.getElementById('txt').innerHTML =  h + ":" + m + ":" + s;
+      setTimeout(startTime, 1000);
+    }
+    
+    function checkTime(i) {
+      if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+      return i;
+    }
+
+//open file.txt
+function openFile() {
+  var file = "file.png";
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    document.getElementById("fileContent").innerText = contents;
+  };
+  reader.readAsText(file);
+}
+
+
+
+    //check if local file, file.png, exists, return true or false
+    function checkForFile() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('HEAD', 'http://localhost:8000/file.png', true);
+        xhr.onload = function(e) {
+            if (this.status == 200) {
+                document.getElementById('fileExists').innerHTML = '<b><font color=\'green\'>File Exists!</font></b>';
+                downloadFile();
+            } else {
+                document.getElementById('fileExists').innerHTML = '<b><font color=\'red\'>File DOES NOT Exist</font></b>';
+            }
+        };
+        xhr.send();
+    }
+
+
+    //run check() every 5 requirements
+    function check_loop() {
+        checkTime();
+        //update <div> file of last check time
+        document.getElementById("lastCheck").innerHTML = "Last check: " + new Date().toLocaleString();
+        checkForFile();
+        setTimeout(check_loop, 10000);
+    }
+
+    //download file.zip
+    function downloadFile() {
+      var request = new XMLHttpRequest();
+    
+      request.addEventListener('readystatechange', function(e) {
+        if(request.readyState == 2 && request.status == 200) {
+          // Download is being started
+        }
+        else if(request.readyState == 3) {
+          // Download is under progress
+        }
+        else if(request.readyState == 4) {
+          // Downloaing has finished
+
+          _OBJECT_URL = URL.createObjectURL(request.response);
+
+          // Set href as a local object URL
+          document.querySelector('#save-file').setAttribute('href', _OBJECT_URL);
+          
+          // Set name of download
+          document.querySelector('#save-file').setAttribute('download', 'img.jpeg');
+          
+          // Recommended : Revoke the object URL after some time to free up resources
+          // There is no way to find out whether user finished downloading
+          setTimeout(function() {
+            window.URL.revokeObjectURL(_OBJECT_URL);
+          }, 60*1000);
+        }
+      });
+      
+      request.addEventListener('progress', function(e) {
+        var percent_complete = (e.loaded / e.total)*100;
+        console.log(percent_complete);
+      });
+      
+      request.responseType = 'blob';
+      
+      // Downloading a JPEG file
+      request.open('get', 'file.png'); 
+      
+      request.send(); 
+    }
+    
+</script>
+</head>
+
+<body onload="startTime(); check_loop()">
+
+  <h2>AUTO-File Puller</h2>
+  <div id="txt"></div>
+
+  <hr>
+
+  <!-- lastCheck div -->
+  <div id="lastCheck"></div>
+
+  <br>
+
+  <!-- lastCheck div -->
+  Status of (file.png):
+  <div id="fileExists"></div>
+  <hr>
+  
+<!-- create download bar element 'DownloadBar' -->
+  <div class="progress">
+    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" id="DownloadBar" style="width: 0%">
+    </div>
+  </div>
+
+  <hr>
+  <!-- //FRom: https://howtodoinjava.com/spring-mvc/spring-mvc-multi-file-upload-with-progress-bar/ -->
+  <div id='progressDownloadBar' style='height: 20px; border: 2px solid green; margin-bottom: 20px'>
+    <div id='DownloadBar' style='height: 100%; background: #33dd33; width: 0%'>
+    </div>
+  </div>
+  
+  <hr
+  <!-- fileContents -->
+  <div id="fileContent"></div>
+
+</body>
+
+</html>
+
