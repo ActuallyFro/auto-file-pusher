@@ -187,10 +187,10 @@ while($true){
 
 		echo "Auto File Puller   <Ctrl+C to quit>"
 		echo "================"
-		echo "Config: Out file <"#+outputFile+">"
-		echo "Config: Saving to dir <"#+destination_folder+">"
-		echo "Config: Check every <"#+str(checkEveryXSec)+"> secs"
-		echo "Current time: " + $timeCur
+		echo "Config: Out file < $outputFile >"
+		echo "Config: Saving to dir < $destination_folder >"
+		echo "Config: Check every < $checkEveryXSec > secs"
+		echo "Current time:  $timeCur"
 		echo ""
 		echo "Statuses"
 		echo "--------"
