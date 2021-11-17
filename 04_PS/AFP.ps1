@@ -30,7 +30,7 @@ function Get-Time {
 
 # # -------------------------------------------------------------------
 # #2 - connect to http://localhost:8000/ and check for a file every 500ms
-function Get-ServerFileExists {
+function Get-ServerFileExistsPS5 {
     $url = "https://github.com/favicon.ico"
     $response = (Invoke-WebRequest $url -UseBasicParsing -OutFile $null)
     $response.StatusCode
@@ -42,6 +42,57 @@ function Get-ServerFileExists {
         return $false
     }
 }
+
+function Get-ServerFileExists {
+  $fileExists = $false
+  #Source: https://stackoverflow.com/questions/20259251/powershell-script-to-check-the-status-of-a-url
+  $url = "https://github.com/favicon.ico"
+
+  $HTTP_Request = [System.Net.WebRequest]::Create($url)
+
+  # PROBLEM:
+  # |Exception calling "GetResponse" with "0" argument(s): "The remote server returned an error: (404) Not Found."
+  # |At AFP.ps1:## char:3
+  # |+   $HTTP_Response = $HTTP_Request.GetResponse()
+  # |+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # |    + CategoryInfo          : NotSpecified: (:) [], MethodInvocationException
+  # |    + FullyQualifiedErrorId : WebException
+  #Solution: Try/Catch -- https://stackoverflow.com/questions/25057721/how-do-you-get-the-response-from-a-404-page-requested-from-powershell
+
+  try {
+    $HTTP_Request = [System.Net.WebRequest]::Create($url)
+    $HTTP_Response = $HTTP_Request.GetResponse()
+    $HTTP_Status = [int]$HTTP_Response.StatusCode
+
+    if ($HTTP_Status -eq 200) {
+      # Write-Host "Site is OK!"
+      $fileExists = $true
+    
+    }
+    #  else {
+    #   # Write-Host "The Site may be down, please check! (Error Code: HTTP_Status)"
+    #   # return $false
+    # }
+
+  } catch [System.Net.WebException] {
+      $statusCode = [int]$_.Exception.Response.StatusCode
+      # echo "[DEBUG] $statusCode"
+      $html = $_.Exception.Response.StatusDescription
+      # echo "[DEBUG] $html"
+
+      # Connection ERRORED! -- Get Response operates on a null object...
+      # return $false
+  }
+
+  # Finally, we clean up the http request by closing it.
+  if ($HTTP_Response -eq $null) { } 
+  else { $HTTP_Response.Close() }
+
+  return $fileExists
+}
+
+
+# 
 
 # def check_server_for_exists(HostIP, HostPort, file2downloadWithPath, debug=False):
 # 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -194,6 +245,7 @@ while($true){
   if($updateFrame){
     $updateFrame = $false
 
+    
     cls
 
 		echo "Auto File Puller   <Ctrl+C to quit>"
