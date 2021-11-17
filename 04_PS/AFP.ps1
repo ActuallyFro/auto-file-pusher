@@ -4,7 +4,7 @@
 
 # Settings
 # --------
-$checkEveryXSec= 5.0
+$checkEveryXMilliseconds= 5000
 $outputFile="file.png"
 $destination_folder = "New_Work_Folder"
 
@@ -18,7 +18,7 @@ $alwaysRun = $false
 # ----------------------
 # 0. Get the current time
 # 1. Clear screen/ print GUI
-# 2. Check every checkEveryXSec for a file (but update the GUI every timeToUpdateFrame) 
+# 2. Check every checkEveryXMilliseconds for a file (but update the GUI every timeToUpdateFrameMS) 
 # 3. Pull the file from the server IF IT EXISTS
 # 4. Creates a directory for the file
 # 5. Moves the downloaded file to the directory
@@ -144,12 +144,12 @@ function Get-Time {
 
 # # main program
 # # =============================================================================
-$timeToUpdateFrame = 0.51 #update screen every 0.5 seconds -- DON'T server check! -- MID POINT ROUNDING... -_-
+$timeToUpdateFrameMS = 500 #update screen every 500 milliseconds || 0.5 sec -- DON'T server check! -- MID POINT ROUNDING... -_-
 $updateFrame = $true
 $runFileChecks = $true
 
-$totalUpdateFramesPerSec = 1.0/$timeToUpdateFrame
-$totalUpdatesBeforeRunningServerCheck = $totalUpdateFramesPerSec*$checkEveryXSec
+$totalUpdateFramesPerSec = [float]1.0/[float]$timeToUpdateFrameMS
+$totalUpdatesBeforeRunningServerCheck = [float]$totalUpdateFramesPerSec*$checkEveryXMilliseconds
 $currentUpdateCount = 0
 
 $strLastCheckPreDownloadTime = ""
@@ -177,7 +177,7 @@ $logfile = "logfile.txt";
 while($true){
 
 #0. Get the current time
-  $timeCur = Get-Time
+  $curTimeStr = Get-Time
 
 	# 1. Clear screen/GUI
   if($updateFrame){
@@ -189,8 +189,9 @@ while($true){
 		echo "================"
 		echo "Config: Out file < $outputFile >"
 		echo "Config: Saving to dir < $destination_folder >"
-		echo "Config: Check every < $checkEveryXSec > secs"
-		echo "Current time:  $timeCur"
+    $convertedSec = $checkEveryXMilliseconds/1000
+		echo "Config: Check every < $convertedSec > secs"
+		echo "Current time:  $curTimeStr"
 		echo ""
 		echo "Statuses"
 		echo "--------"
@@ -224,21 +225,28 @@ while($true){
     }
   }
 
-
 # 	# 2. check every 500ms for a file
 # 	#Check server for file; when found log time
-# 	if not hasFileBeenFound:
-# 		if runFileChecks: #restricts to ping the server to configured checkEveryXSec
-# 			runFileChecks = $false
-# 			$strFileDownloadedAtTime=curTimeStr
-# 			hasFileBeenFound = check_server_for_exists("localhost", 8000, "file.png")
+  if (!$hasFileBeenFound){
+    if($runFileChecks){
+      $runFileChecks = $false
+      $strFileDownloadedAtTime=$curTimeStr
+      
+      #TODO: $hasFileBeenFound = check_server_for_exists("localhost", 8000, "file.png")
 
-# 			if hasFileBeenFound:
-# 				strFileFoundAtTime = " [@"+curTimeStr+"]"
+      if ($hasFileBeenFound){
+        $strFileFoundAtTime = " [@$curTimeStr]"
+      }
+    }
+
+  } else { #File exists...
+    if (!$hasFileDownloadedLogged){
+      $hasFileDownloadedLogged = $true
+    }
+  }
 	
-# 	else: #File exists...
-# 		if not $hasFileDownloadedLogged:
-# 			$hasFileDownloadedLogged = $true
+
+    echo "[DEBUG] Comparing $currentUpdateCount+1 vs. $totalUpdatesBeforeRunningServerCheck"
 
 # 	# 3. Pull the file from the server IF IT EXISTS
 # 	if $hasFileDownloadedLogged and not $hasFileBeenDownloaded:
@@ -279,15 +287,22 @@ while($true){
 # 			$hasFileBeenDownloadedAndPlacedInDirectoryLogged = $true
 
   # wait 500ms
-  Start-Sleep -Seconds $timeToUpdateFrame
+  Start-Sleep -Milliseconds $timeToUpdateFrameMS
+  # Start-Sleep -Seconds $timeToUpdateFrame
   $updateFrame = $true
 
+if (!$hasFileDownloadedLogged){
+  $currentUpdateCount += 1
 
-# 	if not $hasFileDownloadedLogged:
-# 		currentUpdateCount += 1
-# 		if currentUpdateCount >= totalUpdatesBeforeRunningServerCheck:
-# 			currentUpdateCount = 0
-# 			runFileChecks = $true
+
+
+  if($currentUpdateCount -ge ($totalUpdatesBeforeRunningServerCheck-1)){ #HAX: EXCEPTION HANDLING/CHECKING NEEDED!
+    $currentUpdateCount = 0
+    $runFileChecks = $true
+  }
+}
+
+# 	if not $:
 
 }
 
