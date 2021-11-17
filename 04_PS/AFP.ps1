@@ -9,8 +9,6 @@ $outputFile="file.png"
 $destination_folder = "New_Work_Folder"
 
 # Loop Conditions:
-
-#create variable 'stillGettingFile', set to true
 $stillGettingFile = $true
 $alwaysRun = $false
 
@@ -246,7 +244,7 @@ while($true){
   }
 	
 
-    echo "[DEBUG] Comparing $currentUpdateCount+1 vs. $totalUpdatesBeforeRunningServerCheck"
+    # echo "[DEBUG] Comparing $currentUpdateCount+1 vs. $totalUpdatesBeforeRunningServerCheck-1"
 
 # 	# 3. Pull the file from the server IF IT EXISTS
 # 	if $hasFileDownloadedLogged and not $hasFileBeenDownloaded:
