@@ -34,7 +34,7 @@ function Get-Time {
 # #2 - connect to http://localhost:8000/ and check for a file every 500ms
 # def check_server_for_exists(HostIP, HostPort, file2downloadWithPath, debug=False):
 # 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# 	s.connect((HostIP, HostPort))
+# 	s.connect((HostIP, HostPort
 
 # 	# USE HEAD and NOT GET ... b/c it will NOT start downloading...
 # 	s.send(b"HEAD /" + file2downloadWithPath.encode() + b" HTTP/1.1\r\n\r\n")
@@ -68,7 +68,7 @@ function Get-Time {
 
 # 	match = re.match(r'Content-Length: ([\d]+)', ContentStr)
 # 	if match:
-# 		ResponseBytes = int(match.group(1))
+# 		ResponseBytes = int(match.group(1
 
 # 	return ResponseBytes
 
@@ -77,7 +77,7 @@ function Get-Time {
 # # 3. Pull the file from the server IF IT EXISTS
 # def download_from_server(HostIP, HostPort, file2downloadWithPath, outputFile="superd00per.bin", debug=False):
 # 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# 	s.connect((HostIP, HostPort))
+# 	s.connect((HostIP, HostPort
 
 # 	s.send(b"GET /" + file2downloadWithPath.encode() + b" HTTP/1.1\r\n\r\n")
 
@@ -101,20 +101,20 @@ function Get-Time {
 # 			if not data:
 # 				break
 # 			f.write(data) #"utf-8" is default encoding
-# 			# f.write(data.decode())
+# 			# f.write(data.decode(
 
 
 # 	s.close()
 
 # 	ResponseBytes=GetResponseBytesFromHTTPStreamFile("temp_response.txt")
 # 	if debug:
-# 		print("Total Bytes from Content-Length: <"+str(ResponseBytes)+">")
+# 		print("Total Bytes from Content-Length: <"+ ResponseBytes)+">")
 
 # 	#Get total binary bytes from file, save in FileSize
 # 	FileSize = os.path.getsize("temp_response.txt")
 # 	SkipToBytes = FileSize-ResponseBytes
 
-# 	print("Skipping to Byte Position: "+str(SkipToBytes))	
+# 	print("Skipping to Byte Position: "+ SkipToBytes	
 
 # 	# mmmm... large files?
 # 	ReadByteArray = open("temp_response.txt", "rb").read() #Read in all bytes
@@ -148,24 +148,24 @@ $timeToUpdateFrame = 0.51 #update screen every 0.5 seconds -- DON'T server check
 $updateFrame = $true
 $runFileChecks = $true
 
-# totalUpdateFramesPerSec = 1.0/timeToUpdateFrame
-# totalUpdatesBeforeRunningServerCheck = totalUpdateFramesPerSec*checkEveryXSec
-# currentUpdateCount = 0
+$totalUpdateFramesPerSec = 1.0/$timeToUpdateFrame
+$totalUpdatesBeforeRunningServerCheck = $totalUpdateFramesPerSec*$checkEveryXSec
+$currentUpdateCount = 0
 
-# strLastCheckPreDownloadTime = ""
-# hasFileBeenFound = False
-# strFileFoundAtTime =""
-# hasFileBeenDownloaded = False
-# strFileDownloadedAtTime = ""
-# hasDirectoryBeenCreated = False
-# hasFileBeenDownloadedAndPlacedInDirectory = False
+$strLastCheckPreDownloadTime = ""
+$hasFileBeenFound = $false
+$strFileFoundAtTime =""
+$hasFileBeenDownloaded = $false
+$strFileDownloadedAtTime = ""
+$hasDirectoryBeenCreated = $false
+$hasFileBeenDownloadedAndPlacedInDirectory = $false
 
-# # Logs
-# hasFileDownloadedLogged = False
-# hasFileDownloadedSizeConfirmedLogged = False
-# strFileDownloadConfirmed=""
-# hasNewDirectoryCreatedLogged = False
-# hasFileBeenDownloadedAndPlacedInDirectoryLogged = False
+# Logs
+$hasFileDownloadedLogged = $false
+$hasFileDownloadedSizeConfirmedLogged = $false
+$strFileDownloadConfirmed=""
+$hasNewDirectoryCreatedLogged = $false
+$hasFileBeenDownloadedAndPlacedInDirectoryLogged = $false
 
 # # =============== III. CHECK LOOP =================================================================
 
@@ -194,10 +194,10 @@ while($true){
 		echo ""
 		echo "Statuses"
 		echo "--------"
-		echo "File found: <TODO>" #+str(hasFileBeenFound)+strFileFoundAtTime)
-		echo "File downloaded: <TODO>" #+str(hasFileBeenDownloaded))
-		echo "File Placement Directory Created: <TODO>" #+str(hasDirectoryBeenCreated))
-		echo "File placed in directory: <TODO>" #+str(hasFileBeenDownloadedAndPlacedInDirectory)
+		echo "File found: < $hasFileBeenFound $strFileFoundAtTime>"
+		echo "File downloaded: <TODO>" #+ $hasFileBeenDownloaded
+		echo "File Placement Directory Created: <TODO>" #+ hasDirectoryBeenCreated
+		echo "File placed in directory: <TODO>" #+ $hasFileBeenDownloadedAndPlacedInDirectory)
 		echo ""
 		echo "Logs"
 		echo "--------"
@@ -206,15 +206,15 @@ while($true){
 
 		# if hasFileDownloadedLogged:
 		# 	print("File found...downloading..."+strFileDownloadedAtTime)
-		# if hasFileBeenDownloaded:
+		# if $hasFileBeenDownloaded:
 		# 	print("File downloaded!")
 		# if hasFileDownloadedSizeConfirmedLogged:
 		# 	print("File downloaded size confirmed: "+strFileDownloadConfirmed)
 		# if hasNewDirectoryCreatedLogged:
 		# 	print("New Directory ("+ destination_folder +") made!")
-		# if hasFileBeenDownloadedAndPlacedInDirectoryLogged:
+		# if $hasFileBeenDownloadedAndPlacedInDirectoryLogged:
 		# 	print("File placed in directory!"+"[@"+curTimeStr+"]")
-		# 	stillGettingFile = False #exit loop -- since final print/log is DONE!
+		# 	stillGettingFile = $false #exit loop -- since final print/log is DONE!
   }
 
 
@@ -222,7 +222,7 @@ while($true){
 # 	#Check server for file; when found log time
 # 	if not hasFileBeenFound:
 # 		if runFileChecks: #restricts to ping the server to configured checkEveryXSec
-# 			runFileChecks = False
+# 			runFileChecks = $false
 # 			strFileDownloadedAtTime=curTimeStr
 # 			hasFileBeenFound = check_server_for_exists("localhost", 8000, "file.png")
 
@@ -231,27 +231,27 @@ while($true){
 	
 # 	else: #File exists...
 # 		if not hasFileDownloadedLogged:
-# 			hasFileDownloadedLogged = True
+# 			hasFileDownloadedLogged = $true
 
 # 	# 3. Pull the file from the server IF IT EXISTS
-# 	if hasFileDownloadedLogged and not hasFileBeenDownloaded:
+# 	if hasFileDownloadedLogged and not $hasFileBeenDownloaded:
 # 		ResponseBytes = download_from_server("localhost", 8000, "file.png", outputFile)
-# 		curTimeStr = str(show_time()) #update time due to serial processing
+# 		curTimeStr =  show_time( #update time due to serial processing
 # 		strFileDownloadedAtTime = " [@"+curTimeStr+"]"
-# 		hasFileBeenDownloaded = True
+# 		$hasFileBeenDownloaded = $true
 
 # 		#check if file downloaded
 # 		if os.path.isfile(outputFile):
 # 			fileSize = os.path.getsize(outputFile)
 # 			if fileSize == ResponseBytes:
-# 				strFileDownloadConfirmed="<Size: "+str(ResponseBytes)+">"
-# 				hasFileDownloadedSizeConfirmedLogged= True
+# 				strFileDownloadConfirmed="<Size: "+ ResponseBytes)+">"
+# 				hasFileDownloadedSizeConfirmedLogged= $true
 
 # 	# 4. Creates a directory for the file
 # 	if hasFileDownloadedSizeConfirmedLogged:
 # 		if os.path.isdir(destination_folder):
-# 			hasDirectoryBeenCreated = True
-# 			hasNewDirectoryCreatedLogged = True
+# 			hasDirectoryBeenCreated = $true
+# 			hasNewDirectoryCreatedLogged = $true
 # 		else:
 # 			create_destination_directory(destination_folder)
 
@@ -263,13 +263,13 @@ while($true){
 
 # 			#move new file to directory
 # 			shutil.move(outputFile, destination_folder) #https://docs.python.org/3/library/shutil.html
-# 			hasFileBeenDownloadedAndPlacedInDirectory = True
+# 			$hasFileBeenDownloadedAndPlacedInDirectory = $true
 
 # 	#log the fact the file has been downloaded and placed in directory
-# 	if hasFileBeenDownloadedAndPlacedInDirectory:
+# 	if $hasFileBeenDownloadedAndPlacedInDirectory:
 # 		#Check for file in a directory
 # 		if os.path.isfile(destination_folder+"/"+outputFile):
-# 			hasFileBeenDownloadedAndPlacedInDirectoryLogged = True
+# 			$hasFileBeenDownloadedAndPlacedInDirectoryLogged = $true
 
   # wait 500ms
   Start-Sleep -Seconds $timeToUpdateFrame
@@ -280,7 +280,7 @@ while($true){
 # 		currentUpdateCount += 1
 # 		if currentUpdateCount >= totalUpdatesBeforeRunningServerCheck:
 # 			currentUpdateCount = 0
-# 			runFileChecks = True
+# 			runFileChecks = $true
 
 }
 
