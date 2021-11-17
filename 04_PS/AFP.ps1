@@ -60,6 +60,9 @@ function Get-ServerFileExists {
   #Solution: Try/Catch -- https://stackoverflow.com/questions/25057721/how-do-you-get-the-response-from-a-404-page-requested-from-powershell
 
   try {
+    #HAX!!! -- https://stackoverflow.com/questions/9917875/power-shell-web-scraping-ssl-tsl-issue
+    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+
     $HTTP_Request = [System.Net.WebRequest]::Create($url)
     $HTTP_Response = $HTTP_Request.GetResponse()
     $HTTP_Status = [int]$HTTP_Response.StatusCode
