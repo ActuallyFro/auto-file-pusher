@@ -30,6 +30,19 @@ function Get-Time {
 
 # # -------------------------------------------------------------------
 # #2 - connect to http://localhost:8000/ and check for a file every 500ms
+function Get-ServerFileExists {
+    $url = "https://github.com/favicon.ico"
+    $response = (Invoke-WebRequest $url -UseBasicParsing -OutFile $null)
+    $response.StatusCode
+
+    if ($response.StatusCode -eq 200) {
+        return $true
+    }
+    else {
+        return $false
+    }
+}
+
 # def check_server_for_exists(HostIP, HostPort, file2downloadWithPath, debug=False):
 # 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # 	s.connect((HostIP, HostPort
@@ -203,7 +216,7 @@ while($true){
 		echo "--------"
 		echo "Waiting for file ... last check @<$strFileDownloadedAtTime>"  
     if($hasFileDownloadedLogged){
-      echo "File found...downloading...+$strFileDownloadedAtTime"
+      echo "File found...downloading...@<$strFileDownloadedAtTime>"
     }
 
     if($hasFileBeenDownloaded){
@@ -230,7 +243,8 @@ while($true){
       $runFileChecks = $false
       $strFileDownloadedAtTime=$curTimeStr
       
-      #TODO: $hasFileBeenFound = check_server_for_exists("localhost", 8000, "file.png")
+      #TODO: 
+      $hasFileBeenFound = Get-ServerFileExists #check_server_for_exists("localhost", 8000, "file.png")
 
       if ($hasFileBeenFound){
         $strFileFoundAtTime = " [@$curTimeStr]"
@@ -304,4 +318,7 @@ if (!$hasFileDownloadedLogged){
 
 }
 
-
+#####################
+#References
+#https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_comparison_operators?view=powershell-7.2
+#https://docs.microsoft.com/en-us/powershell/scripting/learn/ps101/09-functions?view=powershell-7.2
