@@ -31,6 +31,24 @@ function Get-Time {
 # # -------------------------------------------------------------------
 # #2 - connect to http://localhost:8000/ and check for a file every 500ms
 function Get-ServerFileExistsPS5 {
+  #HAX -- UNCONFIRMED!
+  #https://stackoverflow.com/questions/11696944/powershell-v3-invoke-webrequest-https-error/15841856#15841856 && https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/add-type?view=powershell-7.2
+
+$Source = @"
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+public class TrustAllCertsPolicy : ICertificatePolicy {
+    public bool CheckValidationResult(
+        ServicePoint srvPoint, X509Certificate certificate,
+        WebRequest request, int certificateProblem) {
+        return true;
+    }
+}
+"@
+
+  Add-Type -TypeDefinition $Source  
+  [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy #Wont work if [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true} has been run... 
+
     $url = "https://github.com/favicon.ico"
     $response = (Invoke-WebRequest $url -UseBasicParsing -OutFile $null)
     $response.StatusCode
@@ -60,8 +78,26 @@ function Get-ServerFileExists {
   #Solution: Try/Catch -- https://stackoverflow.com/questions/25057721/how-do-you-get-the-response-from-a-404-page-requested-from-powershell
 
   try {
-    #HAX!!! -- https://stackoverflow.com/questions/9917875/power-shell-web-scraping-ssl-tsl-issue
-    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+    # #HAX!!! -- https://stackoverflow.com/questions/9917875/power-shell-web-scraping-ssl-tsl-issue
+    # [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+
+  #HAX -- UNCONFIRMED!
+  #https://stackoverflow.com/questions/11696944/powershell-v3-invoke-webrequest-https-error/15841856#15841856 && https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/add-type?view=powershell-7.2
+
+$Source = @"
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+public class TrustAllCertsPolicy : ICertificatePolicy {
+    public bool CheckValidationResult(
+        ServicePoint srvPoint, X509Certificate certificate,
+        WebRequest request, int certificateProblem) {
+        return true;
+    }
+}
+"@
+
+  Add-Type -TypeDefinition $Source  
+  [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy #Wont work if [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true} has been run... 
 
     $HTTP_Request = [System.Net.WebRequest]::Create($url)
     $HTTP_Response = $HTTP_Request.GetResponse()
