@@ -199,22 +199,29 @@ while($true){
 		echo "File Placement Directory Created: <$hasDirectoryBeenCreated>"
 		echo "File placed in directory: <$hasFileBeenDownloadedAndPlacedInDirectory>"
 		echo ""
+
 		echo "Logs"
 		echo "--------"
-		echo "Waiting for file ... last check @<$strFileDownloadedAtTime>"
-  
+		echo "Waiting for file ... last check @<$strFileDownloadedAtTime>"  
+    if($hasFileDownloadedLogged){
+      echo "File found...downloading...+$strFileDownloadedAtTime"
+    }
 
-		# if $hasFileDownloadedLogged:
-		# 	print("File found...downloading..."+$strFileDownloadedAtTime)
-		# if $hasFileBeenDownloaded:
-		# 	print("File downloaded!")
-		# if $hasFileDownloadedSizeConfirmedLogged:
-		# 	print("File downloaded size confirmed: "+strFileDownloadConfirmed)
-		# if hasNewDirectoryCreatedLogged:
-		# 	print("New Directory ("+ destination_folder +") made!")
-		# if $hasFileBeenDownloadedAndPlacedInDirectoryLogged:
-		# 	print("File placed in directory!"+"[@"+curTimeStr+"]")
-		# 	stillGettingFile = $false #exit loop -- since final print/log is DONE!
+    if($hasFileBeenDownloaded){
+      echo "File found...downloading...$strFileDownloadedAtTime"
+    }
+
+    if($hasFileDownloadedSizeConfirmedLogged){
+      echo "File downloaded size confirmed: $strFileDownloadConfirmed"
+    }
+
+    if($hasNewDirectoryCreatedLogged){
+      echo "New Directory ($destination_folder) made!"
+    }
+
+    if($hasFileBeenDownloadedAndPlacedInDirectoryLogged){
+      echo "File placed in directory! [@$curTimeStr]"
+    }
   }
 
 
