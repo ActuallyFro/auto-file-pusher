@@ -48,7 +48,7 @@ function Get-ServerFileExists {
   #Source: https://stackoverflow.com/questions/20259251/powershell-script-to-check-the-status-of-a-url
   $url = "https://github.com/favicon.ico"
 
-  $HTTP_Request = [System.Net.WebRequest]::Create($url)
+  # $HTTP_Request = [System.Net.WebRequest]::Create($url)
 
   # PROBLEM:
   # |Exception calling "GetResponse" with "0" argument(s): "The remote server returned an error: (404) Not Found."
