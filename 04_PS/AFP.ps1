@@ -170,7 +170,7 @@ $hasFileBeenDownloadedAndPlacedInDirectoryLogged = $false
 # # =============== III. CHECK LOOP =================================================================
 
 #create variable logfile for file output name
-# $logfile = "logfile.txt";
+$logfile = "logfile.txt";
 
 # # loop: clear screen, show time, check server, pull file
 # while stillGettingFile or alwaysRun:
@@ -195,20 +195,20 @@ while($true){
 		echo "Statuses"
 		echo "--------"
 		echo "File found: < $hasFileBeenFound $strFileFoundAtTime>"
-		echo "File downloaded: <TODO>" #+ $hasFileBeenDownloaded
-		echo "File Placement Directory Created: <TODO>" #+ hasDirectoryBeenCreated
-		echo "File placed in directory: <TODO>" #+ $hasFileBeenDownloadedAndPlacedInDirectory)
+		echo "File downloaded: <$hasFileBeenDownloaded>"
+		echo "File Placement Directory Created: <$hasDirectoryBeenCreated>"
+		echo "File placed in directory: <$hasFileBeenDownloadedAndPlacedInDirectory>"
 		echo ""
 		echo "Logs"
 		echo "--------"
-		echo "Waiting for file ... last check @<TODO>" #+ $strFileDownloadedAtTime
+		echo "Waiting for file ... last check @<$strFileDownloadedAtTime>"
   
 
-		# if hasFileDownloadedLogged:
-		# 	print("File found...downloading..."+strFileDownloadedAtTime)
+		# if $hasFileDownloadedLogged:
+		# 	print("File found...downloading..."+$strFileDownloadedAtTime)
 		# if $hasFileBeenDownloaded:
 		# 	print("File downloaded!")
-		# if hasFileDownloadedSizeConfirmedLogged:
+		# if $hasFileDownloadedSizeConfirmedLogged:
 		# 	print("File downloaded size confirmed: "+strFileDownloadConfirmed)
 		# if hasNewDirectoryCreatedLogged:
 		# 	print("New Directory ("+ destination_folder +") made!")
@@ -223,21 +223,21 @@ while($true){
 # 	if not hasFileBeenFound:
 # 		if runFileChecks: #restricts to ping the server to configured checkEveryXSec
 # 			runFileChecks = $false
-# 			strFileDownloadedAtTime=curTimeStr
+# 			$strFileDownloadedAtTime=curTimeStr
 # 			hasFileBeenFound = check_server_for_exists("localhost", 8000, "file.png")
 
 # 			if hasFileBeenFound:
 # 				strFileFoundAtTime = " [@"+curTimeStr+"]"
 	
 # 	else: #File exists...
-# 		if not hasFileDownloadedLogged:
-# 			hasFileDownloadedLogged = $true
+# 		if not $hasFileDownloadedLogged:
+# 			$hasFileDownloadedLogged = $true
 
 # 	# 3. Pull the file from the server IF IT EXISTS
-# 	if hasFileDownloadedLogged and not $hasFileBeenDownloaded:
+# 	if $hasFileDownloadedLogged and not $hasFileBeenDownloaded:
 # 		ResponseBytes = download_from_server("localhost", 8000, "file.png", outputFile)
 # 		curTimeStr =  show_time( #update time due to serial processing
-# 		strFileDownloadedAtTime = " [@"+curTimeStr+"]"
+# 		$strFileDownloadedAtTime = " [@"+curTimeStr+"]"
 # 		$hasFileBeenDownloaded = $true
 
 # 		#check if file downloaded
@@ -245,30 +245,30 @@ while($true){
 # 			fileSize = os.path.getsize(outputFile)
 # 			if fileSize == ResponseBytes:
 # 				strFileDownloadConfirmed="<Size: "+ ResponseBytes)+">"
-# 				hasFileDownloadedSizeConfirmedLogged= $true
+# 				$hasFileDownloadedSizeConfirmedLogged= $true
 
 # 	# 4. Creates a directory for the file
-# 	if hasFileDownloadedSizeConfirmedLogged:
-# 		if os.path.isdir(destination_folder):
-# 			hasDirectoryBeenCreated = $true
+# 	if $hasFileDownloadedSizeConfirmedLogged:
+# 		if os.path.isdir($destination_folder):
+# 			$hasDirectoryBeenCreated = $true
 # 			hasNewDirectoryCreatedLogged = $true
 # 		else:
-# 			create_destination_directory(destination_folder)
+# 			create_destination_directory($destination_folder)
 
 # 	# 5. Moves the downloaded file to the directory
 # 	if hasNewDirectoryCreatedLogged:
 # 		if os.path.isfile(outputFile): #NOT needed, but best to check
-# 			if os.path.isfile(destination_folder+"/"+outputFile):
-# 				os.remove(destination_folder+"/"+outputFile)
+# 			if os.path.isfile($destination_folder+"/"+outputFile):
+# 				os.remove($destination_folder+"/"+outputFile)
 
 # 			#move new file to directory
-# 			shutil.move(outputFile, destination_folder) #https://docs.python.org/3/library/shutil.html
+# 			shutil.move(outputFile, $destination_folder) #https://docs.python.org/3/library/shutil.html
 # 			$hasFileBeenDownloadedAndPlacedInDirectory = $true
 
 # 	#log the fact the file has been downloaded and placed in directory
 # 	if $hasFileBeenDownloadedAndPlacedInDirectory:
 # 		#Check for file in a directory
-# 		if os.path.isfile(destination_folder+"/"+outputFile):
+# 		if os.path.isfile($destination_folder+"/"+outputFile):
 # 			$hasFileBeenDownloadedAndPlacedInDirectoryLogged = $true
 
   # wait 500ms
@@ -276,7 +276,7 @@ while($true){
   $updateFrame = $true
 
 
-# 	if not hasFileDownloadedLogged:
+# 	if not $hasFileDownloadedLogged:
 # 		currentUpdateCount += 1
 # 		if currentUpdateCount >= totalUpdatesBeforeRunningServerCheck:
 # 			currentUpdateCount = 0
